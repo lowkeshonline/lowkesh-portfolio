@@ -1,4 +1,5 @@
 import { BsGithub } from "react-icons/bs";
+import Link from "next/link";
 
 export default function Navbar() {
   return (
@@ -12,22 +13,28 @@ export default function Navbar() {
           </p>
         </div>
         <div className="flex-1 flex justify-center">
-          <ul className="flex md:gap-x-8 text-[11px] uppercase tracking-widest font-jetbrains-mono font-bold text-on-surface-variant">
+          <ul className="flex md:gap-x-8 text-[12px] uppercase tracking-widest font-jetbrains-mono font-bold text-on-surface-variant">
             <li>
-              <a href="">HOME</a>
+              <Link href="/" className="nav-link">
+                HOME
+              </Link>
             </li>
             <li>
-              <a href="#">PROJECTS</a>
+              <Link href="/projects" className="nav-link">
+                PROJECTS
+              </Link>
             </li>
             <li>
-              <a href="#">BLOG</a>
+              <Link href="/blog" className="nav-link">
+                BLOG
+              </Link>
             </li>
           </ul>
         </div>
         <div>
           <a
-            href="https://github.com"
-            className="text-on-surface-variant hover:text-aqua-hover transition-colors flex items-center before:hidden"
+            href="https://github.com/lowkeshonline"
+            className="text-on-surface-variant hover:text-aqua-hover transition-colors flex items-center"
           >
             <BsGithub size={18} />
           </a>

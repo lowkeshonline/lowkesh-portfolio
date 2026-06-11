@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Instrument_Serif, Geist, JetBrains_Mono } from "next/font/google";
 import Navbar from "./_components/Navbar";
 import "../app/globals.css";
+import Footer from "./_components/Footer";
 
 const instrumentSerif = Instrument_Serif({
   weight: "400",
@@ -54,6 +55,7 @@ export default function RootLayout({
 
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );
