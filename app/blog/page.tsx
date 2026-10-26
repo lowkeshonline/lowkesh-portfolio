@@ -1,66 +1,60 @@
 import Link from "next/link";
-import { getAllPosts } from "../_utils/mdx";
 import type { Metadata } from "next";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { formatPostDate, getAllPosts, readingTime } from "../_utils/mdx";
 
 export const metadata: Metadata = {
-  title: "Blogs | Lokesh.OS",
-  description:
-    "Thoughts, tutorials, and deep dives into software engineering, architecture, and design by Lokesh.",
+  title: "Writing | Lokesh Chonga",
+  description: "Notes from building, debugging, and learning in public.",
   openGraph: {
-    title: "System Logs | Lokesh.OS",
-    description:
-      "Thoughts, tutorials, and deep dives into software engineering, architecture, and design by Lokesh.",
+    title: "Writing | Lokesh Chonga",
+    description: "Notes from building, debugging, and learning in public.",
     type: "website",
   },
 };
 
 export default function BlogIndex() {
   const posts = getAllPosts();
+  const count = String(posts.length).padStart(2, "0");
 
   return (
-    <main className="flex-1 flex flex-col relative px-5 lg:px-16 w-full max-w-[1440px] mx-auto py-12">
-      <div className="w-full flex flex-col gap-4 mb-16 mt-8">
-        <p className="text-[11px] font-jetbrains-mono font-bold tracking-widest text-aqua-glow uppercase">
-          <span className="mr-2">{">"}</span> System Logs
-        </p>
-        <h1 className="text-[56px] font-instrument-serif leading-[110%] text-on-background">
-          Blogs
-        </h1>
-        <p className="text-[14px] font-jetbrains-mono text-on-surface-variant max-w-2xl mt-4">
-          Thoughts, tutorials, and deep dives into software engineering,
-          architecture, and design.
-        </p>
-      </div>
+    <main className="site-main page" id="main-content">
+      <div className="container">
+        <Link href="/#writing" className="page-back">
+          <ArrowLeft size={13} aria-hidden="true" /> Back to home
+        </Link>
 
-      <div className="flex flex-col gap-8 w-full mb-24 lg:w-3/4">
-        {posts.map((post) => (
-          <Link href={`/blog/${post.slug}`} key={post.slug} className="group">
-            <div className="terminal-border surface-level-1 p-8 flex flex-col gap-4 hover:border-aqua-glow transition-colors duration-300">
-              <span className="text-[11px] font-jetbrains-mono tracking-widest text-on-surface-variant uppercase">
-                {post.frontmatter.date}
-              </span>
-              <h2 className="text-[28px] font-instrument-serif text-aqua-glow leading-none group-hover:text-aqua-hover transition-colors">
-                {post.frontmatter.title}
-              </h2>
-              <p className="text-[13px] font-jetbrains-mono text-on-surface-variant leading-relaxed">
-                {post.frontmatter.summary}
-              </p>
+        <header className="page-header">
+          <p className="page-kicker">
+            <span>06</span> · Writing / All
+          </p>
+          <h1>
+            All writing<span>.</span>
+          </h1>
+          <p>
+            Notes from building, debugging, and learning in public. {count}{" "}
+            {posts.length === 1 ? "post" : "posts"} so far.
+          </p>
+        </header>
 
-              {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border-dim">
-                  {post.frontmatter.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[10px] font-jetbrains-mono tracking-widest uppercase px-2 py-1 border border-border-dim text-on-background"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+        {posts.length ? (
+          <div className="writing-list">
+            {posts.map((post) => (
+              <Link className="writing-row" href={`/blog/${post.slug}`} key={post.slug}>
+                <span className="writing-date">{formatPostDate(post.frontmatter.date)}</span>
+                <div className="writing-main">
+                  <h2>{post.frontmatter.title}</h2>
+                  <p>{post.frontmatter.summary}</p>
                 </div>
-              )}
-            </div>
-          </Link>
-        ))}
+                <span className="writing-meta">
+                  {readingTime(post.content)} min <ArrowUpRight size={12} aria-hidden="true" />
+                </span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <p className="empty-state">No notes published yet.</p>
+        )}
       </div>
     </main>
   );

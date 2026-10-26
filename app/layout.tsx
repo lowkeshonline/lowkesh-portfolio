@@ -1,28 +1,66 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Geist, JetBrains_Mono } from "next/font/google";
-import Navbar from "./_components/Navbar";
-import "../app/globals.css";
-import Footer from "./_components/Footer";
+import SiteHeader from "./_components/SiteHeader";
+import SocialDock from "./_components/SocialDock";
+import { profile } from "./_data/profile";
+import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
   weight: "400",
+  style: ["normal", "italic"],
   subsets: ["latin"],
   variable: "--font-instrument-serif",
+  display: "swap",
 });
 
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Lokesh.OS - Portfolio",
-  description: "Lokesh.OS - Building Systems for humans",
+  title: `${profile.name} — Software Engineer`,
+  description:
+    "Lokesh Chonga is a software engineer based in Hyderabad, India, building clear, fast web products with React, Next.js, Node, and TypeScript.",
+  authors: [{ name: profile.name, url: profile.github }],
+  keywords: [
+    "Lokesh Chonga",
+    "software engineer",
+    "frontend developer",
+    "React",
+    "Next.js",
+    "TypeScript",
+    "portfolio",
+  ],
+  openGraph: {
+    title: `${profile.name} — Software Engineer`,
+    description:
+      "Software engineer building clear, fast web products. Currently finishing an MCA and interning at Shipturtle Apps.",
+    type: "website",
+    siteName: profile.name,
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary",
+    title: `${profile.name} — Software Engineer`,
+    description: "Software engineer building clear, fast web products.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f1113",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -33,29 +71,23 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full antialiased ${instrumentSerif.variable} ${geist.variable} ${jetbrainsMono.variable}`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+      className={`${instrumentSerif.variable} ${geist.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-full flex flex-col relative font-geist bg-background text-on-background">
-        <div
-          className="pointer-events-none fixed inset-0 z-9999"
-          style={{ opacity: 0.03 }}
-        >
-          <svg className="h-full w-full">
-            <filter id="noiseFilter">
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.65"
-                numOctaves="3"
-                stitchTiles="stitch"
-              />
-            </filter>
-            <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-          </svg>
-        </div>
-
-        <Navbar />
-        {children}
-        <Footer />
+      <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`,
+          }}
+        />
+        <span id="top" className="top-anchor" aria-hidden="true" />
+        <a className="skip-link" href="#main-content">
+          Skip to content
+        </a>
+        <SiteHeader />
+        <div className="site-shell">{children}</div>
+        <SocialDock />
       </body>
     </html>
   );

@@ -1,8 +1,9 @@
-import { getPostBySlug, getPostSlugs } from "../../_utils/mdx";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import { MDXComponents } from "../../_components/MDXComponents";
-import Link from "next/link";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import { formatPostDate, getAllPosts, getPostBySlug, readingTime } from "../../_utils/mdx";
+import { MDXComponents } from "../../_components/MDXComponents";
 
 export async function generateMetadata({
   params,
@@ -12,7 +13,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = getPostBySlug(slug);
   return {
-    title: `${post.frontmatter.title} | Lokesh.OS`,
+    title: `${post.frontmatter.title} | Lokesh Chonga`,
     description: post.frontmatter.summary,
     openGraph: {
       title: post.frontmatter.title,
@@ -24,11 +25,8 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams() {
-  const slugs = getPostSlugs();
-  return slugs.map((slug) => ({
-    slug: slug.replace(/\.mdx$/, ""),
-  }));
+export function generateStaticParams() {
+  return getAllPosts().map((post) => ({ slug: post.slug }));
 }
 
 export default async function BlogPost({
@@ -36,50 +34,47 @@ export default async function BlogPost({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const resolvedParams = await params;
-  const post = getPostBySlug(resolvedParams.slug);
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   return (
-    <main className="flex-1 flex flex-col relative px-5 lg:px-16 w-full max-w-[1000px] mx-auto py-12 mb-24">
-      {/* Back Button */}
-      <Link
-        href="/blog"
-        className="text-[11px] font-jetbrains-mono tracking-widest text-aqua-glow uppercase mb-12 hover:text-aqua-hover transition-colors inline-block w-fit"
-      >
-        <span className="mr-2">{"<"}</span> RETURN_TO_LOGS
-      </Link>
+    <main className="article-page" id="main-content">
+      <div className="article-inner">
+        <Link href="/blog" className="page-back">
+          <ArrowLeft size={13} aria-hidden="true" /> All writing
+        </Link>
 
-      {/* Header */}
-      <header className="mb-12 border-b border-border-dim pb-8">
-        <h1 className="text-[48px] md:text-[64px] font-instrument-serif leading-[105%] text-on-background mb-6">
-          {post.frontmatter.title}
-        </h1>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-[13px] font-jetbrains-mono text-on-surface-variant">
-          <span className="uppercase tracking-widest">
-            {post.frontmatter.date}
-          </span>
-          {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
-            <>
-              <span className="hidden sm:inline text-border-dim">|</span>
-              <div className="flex flex-wrap gap-2">
+        <header className="article-header">
+          <p className="page-kicker">
+            <span>06</span> · Writing
+          </p>
+          <h1>{post.frontmatter.title}</h1>
+          <div className="article-meta">
+            <time dateTime={post.frontmatter.date}>
+              {formatPostDate(post.frontmatter.date)}
+            </time>
+            <span aria-hidden="true">·</span>
+            <span>{readingTime(post.content)} min read</span>
+            {post.frontmatter.tags?.length ? (
+              <div className="article-tags">
                 {post.frontmatter.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[10px] tracking-widest uppercase px-2 py-1 border border-border-dim text-on-background bg-level-1"
-                  >
-                    {tag}
-                  </span>
+                  <span key={tag}>{tag}</span>
                 ))}
               </div>
-            </>
-          )}
-        </div>
-      </header>
+            ) : null}
+          </div>
+        </header>
 
-      {/* Content */}
-      <article className="prose-none w-full max-w-none">
-        <MDXRemote source={post.content} components={MDXComponents} />
-      </article>
+        <article className="article-content">
+          <MDXRemote source={post.content} components={MDXComponents} />
+        </article>
+
+        <div className="article-footer">
+          <Link href="/blog" className="page-back">
+            <ArrowLeft size={13} aria-hidden="true" /> Back to all writing
+          </Link>
+        </div>
+      </div>
     </main>
   );
 }

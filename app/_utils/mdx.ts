@@ -9,6 +9,7 @@ export interface PostFrontmatter {
   date: string;
   summary: string;
   tags?: string[];
+  draft?: boolean;
 }
 
 export interface Post {
@@ -39,8 +40,19 @@ export function getAllPosts(): Post[] {
   const slugs = getPostSlugs();
   const posts = slugs
     .map((slug) => getPostBySlug(slug))
+    .filter((post) => !post.frontmatter.draft)
     .sort((post1, post2) =>
       post1.frontmatter.date > post2.frontmatter.date ? -1 : 1,
     );
   return posts;
+}
+
+export function formatPostDate(date: string) {
+  const [year, month, day] = date.split("-").map(Number);
+  return `${String(month).padStart(2, "0")} / ${String(day).padStart(2, "0")} / ${String(year).slice(2)}`;
+}
+
+export function readingTime(content: string) {
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
 }
